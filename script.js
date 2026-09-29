@@ -1,5 +1,3 @@
-
-
 tailwind.config = {
             theme: {
                 extend: {
