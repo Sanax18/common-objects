@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Everyday Objects - Interactive English Learning</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="./script.js" defer></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    
+</head>
+<body class="h-full font-sans text-slate-800 antialiased flex flex-col min-h-screen">
+
+    <!-- Top Navigation Header -->
+    <header class="bg-gradient-to-r from-indigo-700 via-purple-700 to-blue-700 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2.5 bg-white/10 backdrop-blur-md rounded-xl border border-white/20">
+                        <i class="fa-solid fa-shapes text-2xl text-yellow-300"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Everyday Objects Explorer</h1>
+                        <p class="text-xs sm:text-sm text-indigo-100 font-medium">Aprende objetos cotidianos en inglés | Home, Uni & Street</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs -->
+                <nav class="flex bg-black/20 backdrop-blur-md p-1.5 rounded-2xl border border-white/10 w-full md:w-auto justify-center">
+                    <button onclick="switchTab('flashcards')" id="tab-flashcards" class="px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 flex items-center space-x-2 bg-white text-indigo-900 shadow-md">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>Flashcards</span>
+                    </button>
+                    <button onclick="switchTab('key-concept')" id="tab-key-concept" class="px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 flex items-center space-x-2 text-white hover:text-indigo-100 hover:bg-white/10">
+                        <i class="fa-solid fa-lightbulb"></i>
+                        <span>Key Concept</span>
+                    </button>
+                    <button onclick="switchTab('quiz')" id="tab-quiz" class="px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 flex items-center space-x-2 text-white hover:text-indigo-100 hover:bg-white/10">
+                        <i class="fa-solid fa-circle-question"></i>
+                        <span>Quiz Practice</span>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Pronunciation Settings & Audio Status Banner -->
+    <section class="bg-indigo-900/95 text-indigo-100 text-xs py-2 px-4 shadow-inner border-b border-indigo-800">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center space-x-2">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping mr-1.5"></span> Speech API Active
+                </span>
+                <span class="hidden sm:inline">Haz clic en el icono <i class="fa-solid fa-volume-high mx-1 text-yellow-300"></i> para escuchar la pronunciación en inglés.</span>
+            </div>
+            <div class="flex items-center space-x-3">
+                <label for="speed-select" class="text-indigo-200 font-medium">Velocidad:</label>
+                <select id="speed-select" class="bg-indigo-950 text-indigo-100 text-xs rounded-lg px-2 py-1 border border-indigo-700 focus:outline-none focus:ring-1 focus:ring-indigo-400">
+                    <option value="0.8">0.8x (Lento)</option>
+                    <option value="1.0" selected>1.0x (Normal)</option>
+                    <option value="1.2">1.2x (Rápido)</option>
+                </select>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- SECTION 1: FLASHCARDS SECTION -->
+        <section id="section-flashcards" class="space-y-6">
+            
+            <!-- Category Filter Header and Search Bar -->
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row items-center justify-between gap-4">
+                
+                <!-- Filter Pills -->
+                <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                    <button onclick="filterCategory('all')" id="cat-all" class="cat-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-indigo-600 text-white shadow-sm">
+                        <i class="fa-solid fa-border-all mr-1.5"></i> Todos (<span id="count-all">0</span>)
+                    </button>
+                    <button onclick="filterCategory('home')" id="cat-home" class="cat-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">
+                        <i class="fa-solid fa-house mr-1.5 text-amber-500"></i> At Home (<span id="count-home">0</span>)
+                    </button>
+                    <button onclick="filterCategory('classroom')" id="cat-classroom" class="cat-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">
+                        <i class="fa-solid fa-graduation-cap mr-1.5 text-blue-500"></i> Classroom / Uni (<span id="count-classroom">0</span>)
+                    </button>
+                    <button onclick="filterCategory('street')" id="cat-street" class="cat-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">
+                        <i class="fa-solid fa-city mr-1.5 text-emerald-500"></i> On the Street (<span id="count-street">0</span>)
+                    </button>
+                </div>
+
+                <!-- Search Input -->
+                <div class="relative w-full md:w-72">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="search-input" oninput="handleSearch()" placeholder="Buscar palabra (ej. keys, pen)..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
+                </div>
+            </div>
+
+            <!-- Stats & Quick Instructions -->
+            <div class="flex items-center justify-between text-xs sm:text-sm text-slate-500 px-2">
+                <div>
+                    <i class="fa-solid fa-hand-pointer text-indigo-500 mr-1.5"></i>
+                    <span>Haz clic en una tarjeta para <strong>voltearla</strong> y descubrir la oración de ejemplo.</span>
+                </div>
+                <div id="flipped-counter" class="font-semibold text-slate-700 bg-slate-200/70 px-3 py-1 rounded-full">
+                    Tarjetas exploradas: 0 / 0
+                </div>
+            </div>
+
+            <!-- Flashcard Grid -->
+            <div id="flashcards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Dynamically generated flashcards will be inserted here -->
+            </div>
+
+            <!-- Empty search fallback -->
+            <div id="empty-state" class="hidden text-center py-12 bg-white rounded-2xl border border-dashed border-slate-300">
+                <i class="fa-solid fa-ghost text-4xl text-slate-300 mb-3"></i>
+                <h3 class="text-base font-semibold text-slate-700">No se encontraron resultados</h3>
+                <p class="text-xs text-slate-500 mt-1">Intenta buscar otro objeto o cambia el filtro de categoría.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 2: KEY CONCEPT SECTION -->
+        <section id="section-key-concept" class="hidden space-y-8">
+            
+            <!-- Key Concept Banner Header -->
+            <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-purple-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="max-w-3xl space-y-4">
+                    <span class="px-3 py-1 bg-yellow-400 text-indigo-950 font-bold text-xs uppercase tracking-wider rounded-full shadow-md inline-block">
+                        <i class="fa-solid fa-star mr-1"></i> Grammar Key Concept
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">How to Practice Everyday Objects</h2>
+                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                        In your daily life, you can practice with the objects around you by pointing at them and asking questions. Pay attention to whether the object is <strong>Singular</strong> (1 item) or <strong>Plural</strong> (2+ items or paired objects like glasses).
+                    </p>
+                </div>
+            </div>
+
+            <!-- Singular vs Plural Interactive Comparison Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- Singular Box -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-indigo-100 hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-lg">
+                                1
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800">Singular Objects</h3>
+                                <p class="text-xs text-indigo-600 font-semibold">Un solo objeto (a / an)</p>
+                            </div>
+                        </div>
+                        <span class="text-2xl text-indigo-500"><i class="fa-solid fa-mobile-screen"></i></span>
+                    </div>
+
+                    <!-- Question & Answer Breakdown -->
+                    <div class="bg-indigo-50/70 rounded-xl p-4 space-y-3 border border-indigo-100">
+                        <div class="flex items-center justify-between bg-white p-3 rounded-lg border border-indigo-100 shadow-2xs">
+                            <div>
+                                <span class="text-xs text-slate-400 font-bold uppercase block">Pregunta:</span>
+                                <span class="font-bold text-slate-800">What is this?</span>
+                                <span class="text-xs text-slate-500 block italic">¿Qué es esto?</span>
+                            </div>
+                            <button onclick="speakText('What is this?')" class="p-2.5 rounded-full bg-indigo-600 text-white hover:bg-indigo-700 transition">
+                                <i class="fa-solid fa-volume-high"></i>
+                            </button>
+                        </div>
+
+                        <div class="flex items-center justify-between bg-white p-3 rounded-lg border border-indigo-100 shadow-2xs">
+                            <div>
+                                <span class="text-xs text-slate-400 font-bold uppercase block">Respuesta:</span>
+                                <span class="font-bold text-indigo-700">It's a phone.</span> / <span class="font-bold text-indigo-700">It's an umbrella.</span>
+                                <span class="text-xs text-slate-500 block italic">Es un teléfono. / Es un paraguas.</span>
+                            </div>
+                            <button onclick="speakText('It is a phone. It is an umbrella.')" class="p-2.5 rounded-full bg-indigo-600 text-white hover:bg-indigo-700 transition">
+                                <i class="fa-solid fa-volume-high"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Rule Tip -->
+                    <div class="mt-4 text-xs text-slate-600 bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start space-x-2">
+                        <i class="fa-solid fa-lightbulb text-amber-500 mt-0.5"></i>
+                        <span>Usa <strong>a</strong> delante de consonantes (a phone, a chair, a notebook) y <strong>an</strong> delante de vocales (an umbrella, an eraser).</span>
+                    </div>
+                </div>
+
+                <!-- Plural Box -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-purple-100 hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-lg">
+                                2+
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800">Plural Objects</h3>
+                                <p class="text-xs text-purple-600 font-semibold">Dos o más objetos (o parejas como glasses)</p>
+                            </div>
+                        </div>
+                        <span class="text-2xl text-purple-500"><i class="fa-solid fa-key"></i></span>
+                    </div>
+
+                    <!-- Question & Answer Breakdown -->
+                    <div class="bg-purple-50/70 rounded-xl p-4 space-y-3 border border-purple-100">
+                        <div class="flex items-center justify-between bg-white p-3 rounded-lg border border-purple-100 shadow-2xs">
+                            <div>
+                                <span class="text-xs text-slate-400 font-bold uppercase block">Pregunta:</span>
+                                <span class="font-bold text-slate-800">What are these?</span>
+                                <span class="text-xs text-slate-500 block italic">¿Qué son estos / estas?</span>
+                            </div>
+                            <button onclick="speakText('What are these?')" class="p-2.5 rounded-full bg-purple-600 text-white hover:bg-purple-700 transition">
+                                <i class="fa-solid fa-volume-high"></i>
+                            </button>
+                        </div>
+
+                        <div class="flex items-center justify-between bg-white p-3 rounded-lg border border-purple-100 shadow-2xs">
+                            <div>
+                                <span class="text-xs text-slate-400 font-bold uppercase block">Respuesta:</span>
+                                <span class="font-bold text-purple-700">They are keys.</span> / <span class="font-bold text-purple-700">They are glasses.</span>
+                                <span class="text-xs text-slate-500 block italic">Son llaves. / Son gafas.</span>
+                            </div>
+                            <button onclick="speakText('They are keys. They are glasses.')" class="p-2.5 rounded-full bg-purple-600 text-white hover:bg-purple-700 transition">
+                                <i class="fa-solid fa-volume-high"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Rule Tip -->
+                    <div class="mt-4 text-xs text-slate-600 bg-purple-50 border border-purple-200 rounded-xl p-3 flex items-start space-x-2">
+                        <i class="fa-solid fa-circle-info text-purple-500 mt-0.5"></i>
+                        <span>No utilices "a/an" en plural. Palabras como <strong>glasses</strong> (gafas) siempre se tratan como plural.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Dialogue Practice Area -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800">Interactive Dialogue Practice</h3>
+                        <p class="text-xs text-slate-500">Haz clic en cada bocadillo para escuchar y repetir en voz alta.</p>
+                    </div>
+                    <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-semibold rounded-full">Práctica Oral</span>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Dialogue 1: At Home -->
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                            <span class="font-semibold text-xs text-amber-700 uppercase"><i class="fa-solid fa-house mr-1"></i> Situation 1: At Home</span>
+                            <button onclick="playFullDialogue('d1')" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center space-x-1">
+                                <i class="fa-solid fa-play"></i>
+                                <span>Escuchar conversación</span>
+                            </button>
+                        </div>
+
+                        <!-- Chat Bubbles -->
+                        <div class="space-y-3">
+                            <div onclick="speakText('What is this on the table?')" class="cursor-pointer bg-white p-3 rounded-2xl rounded-tl-none shadow-2xs border border-slate-200 hover:border-indigo-300 transition flex justify-between items-center group">
+                                <div>
+                                    <span class="text-xs font-bold text-indigo-600 block">Person A:</span>
+                                    <p class="text-sm font-medium text-slate-800">What is this on the table?</p>
+                                    <p class="text-xs text-slate-400">¿Qué es esto sobre la mesa?</p>
+                                </div>
+                                <i class="fa-solid fa-volume-high text-slate-300 group-hover:text-indigo-600 transition"></i>
+                            </div>
+
+                            <div onclick="speakText('It is a smartphone! And what are these?')" class="cursor-pointer bg-indigo-600 text-white p-3 rounded-2xl rounded-tr-none shadow-2xs ml-auto max-w-[85%] hover:bg-indigo-700 transition flex justify-between items-center group">
+                                <div>
+                                    <span class="text-xs font-bold text-indigo-200 block">Person B:</span>
+                                    <p class="text-sm font-medium">It's a smartphone! And what are these?</p>
+                                    <p class="text-xs text-indigo-200">¡Es un teléfono! ¿Y qué son estas?</p>
+                                </div>
+                                <i class="fa-solid fa-volume-high text-indigo-300 group-hover:text-white transition"></i>
+                            </div>
+
+                            <div onclick="speakText('They are my house keys.')" class="cursor-pointer bg-white p-3 rounded-2xl rounded-tl-none shadow-2xs border border-slate-200 hover:border-indigo-300 transition flex justify-between items-center group">
+                                <div>
+                                    <span class="text-xs font-bold text-indigo-600 block">Person A:</span>
+                                    <p class="text-sm font-medium text-slate-800">They are my house keys.</p>
+                                    <p class="text-xs text-slate-400">Son mis llaves de la casa.</p>
+                                </div>
+                                <i class="fa-solid fa-volume-high text-slate-300 group-hover:text-indigo-600 transition"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dialogue 2: Classroom -->
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                            <span class="font-semibold text-xs text-blue-700 uppercase"><i class="fa-solid fa-graduation-cap mr-1"></i> Situation 2: In the Classroom</span>
+                            <button onclick="playFullDialogue('d2')" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center space-x-1">
+                                <i class="fa-solid fa-play"></i>
+                                <span>Escuchar conversación</span>
+                            </button>
+                        </div>
+
+                        <!-- Chat Bubbles -->
+                        <div class="space-y-3">
+                            <div onclick="speakText('Excuse me, what is this object?')" class="cursor-pointer bg-white p-3 rounded-2xl rounded-tl-none shadow-2xs border border-slate-200 hover:border-indigo-300 transition flex justify-between items-center group">
+                                <div>
+                                    <span class="text-xs font-bold text-indigo-600 block">Student:</span>
+                                    <p class="text-sm font-medium text-slate-800">Excuse me, what is this object?</p>
+                                    <p class="text-xs text-slate-400">Disculpe, ¿qué es este objeto?</p>
+                                </div>
+                                <i class="fa-solid fa-volume-high text-slate-300 group-hover:text-indigo-600 transition"></i>
+                            </div>
+
+                            <div onclick="speakText('It is an eraser for the whiteboard.')" class="cursor-pointer bg-purple-600 text-white p-3 rounded-2xl rounded-tr-none shadow-2xs ml-auto max-w-[85%] hover:bg-purple-700 transition flex justify-between items-center group">
+                                <div>
+                                    <span class="text-xs font-bold text-purple-200 block">Teacher:</span>
+                                    <p class="text-sm font-medium">It's an eraser for the whiteboard.</p>
+                                    <p class="text-xs text-purple-200">Es un borrador para el tablero.</p>
+                                </div>
+                                <i class="fa-solid fa-volume-high text-purple-300 group-hover:text-white transition"></i>
+                            </div>
+
+                            <div onclick="speakText('Oh thank you! And what are these on the desk? They are markers.')" class="cursor-pointer bg-white p-3 rounded-2xl rounded-tl-none shadow-2xs border border-slate-200 hover:border-indigo-300 transition flex justify-between items-center group">
+                                <div>
+                                    <span class="text-xs font-bold text-indigo-600 block">Student:</span>
+                                    <p class="text-sm font-medium text-slate-800">Oh thank you! They are markers.</p>
+                                    <p class="text-xs text-slate-400">¡Oh gracias! Son marcadores.</p>
+                                </div>
+                                <i class="fa-solid fa-volume-high text-slate-300 group-hover:text-indigo-600 transition"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: INTERACTIVE QUIZ SECTION -->
+        <section id="section-quiz" class="hidden space-y-6">
+            
+            <!-- Quiz Progress Container -->
+            <div id="quiz-start-screen" class="bg-white rounded-3xl p-8 shadow-sm border border-slate-200 text-center max-w-2xl mx-auto space-y-6">
+                <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-3xl flex items-center justify-center text-4xl mx-auto shadow-inner">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-extrabold text-slate-800">Cuestionario Interactivo de Vocabulario</h2>
+                    <p class="text-sm text-slate-500 mt-2">
+                        Pone a prueba lo que has aprendido. Observa la imagen del objeto y responde a las preguntas usando opciones de opción múltiple (A, B, C).
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4 text-left max-w-md mx-auto bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <div class="text-center">
+                        <span class="text-xs text-slate-400 font-bold block">PREGUNTAS</span>
+                        <span class="text-lg font-bold text-indigo-600">8</span>
+                    </div>
+                    <div class="text-center border-x border-slate-200">
+                        <span class="text-xs text-slate-400 font-bold block">FORMATO</span>
+                        <span class="text-lg font-bold text-indigo-600">A / B / C</span>
+                    </div>
+                    <div class="text-center">
+                        <span class="text-xs text-slate-400 font-bold block">AUDIO</span>
+                        <span class="text-lg font-bold text-indigo-600">Sí</span>
+                    </div>
+                </div>
+
+                <button onclick="startQuiz()" class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold rounded-2xl shadow-lg transition-all transform hover:-translate-y-0.5">
+                    <i class="fa-solid fa-play mr-2"></i> Comenzar el Quiz
+                </button>
+            </div>
+
+            <!-- Quiz Play Screen (Initially Hidden) -->
+            <div id="quiz-play-screen" class="hidden max-w-3xl mx-auto space-y-6">
+                
+                <!-- Progress bar header -->
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                    <div class="flex items-center space-x-3 w-full mr-4">
+                        <span id="quiz-question-number" class="text-xs font-bold text-indigo-600 uppercase tracking-wider whitespace-nowrap">Pregunta 1/8</span>
+                        <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                            <div id="quiz-progress-bar" class="bg-indigo-600 h-full w-0 transition-all duration-300"></div>
+                        </div>
+                    </div>
+                    <span id="quiz-score-badge" class="text-xs font-bold bg-amber-100 text-amber-800 px-3 py-1 rounded-full whitespace-nowrap">
+                        <i class="fa-solid fa-star mr-1 text-amber-500"></i> Puntos: <span id="quiz-score">0</span>
+                    </span>
+                </div>
+
+                <!-- Main Question Card -->
+                <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-6">
+                    
+                    <!-- Image / Icon Display Area -->
+                    <div class="bg-gradient-to-br from-slate-50 to-indigo-50/50 rounded-2xl p-8 border border-slate-200 text-center relative flex flex-col items-center justify-center">
+                        <div id="quiz-icon-container" class="text-7xl sm:text-8xl my-2 text-indigo-600 transition-transform duration-300 hover:scale-110">
+                            <!-- SVG / Icon dynamic -->
+                        </div>
+                        <button onclick="playQuizPromptAudio()" class="mt-2 inline-flex items-center space-x-2 px-3 py-1.5 bg-white text-indigo-700 hover:bg-indigo-50 border border-indigo-200 rounded-xl text-xs font-semibold shadow-2xs transition">
+                            <i class="fa-solid fa-volume-high"></i>
+                            <span>Escuchar objeto</span>
+                        </button>
+                    </div>
+
+                    <!-- Question Prompt -->
+                    <div class="text-center space-y-1">
+                        <h3 id="quiz-question-text" class="text-xl sm:text-2xl font-extrabold text-slate-800">
+                            What is this?
+                        </h3>
+                        <p class="text-xs text-slate-400 italic">Selecciona la opción correcta en inglés:</p>
+                    </div>
+
+                    <!-- Options A, B, C Buttons -->
+                    <div id="quiz-options-container" class="grid grid-cols-1 gap-3">
+                        <!-- Dynamic Options A, B, C inserted via JS -->
+                    </div>
+
+                    <!-- Feedback Box -->
+                    <div id="quiz-feedback" class="hidden p-4 rounded-2xl border text-sm font-medium flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <i id="feedback-icon" class="text-xl"></i>
+                            <span id="feedback-text"></span>
+                        </div>
+                        <button id="next-question-btn" onclick="nextQuestion()" class="px-5 py-2 bg-indigo-600 text-white font-bold rounded-xl text-xs hover:bg-indigo-700 transition">
+                            Siguiente <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Results Screen (Initially Hidden) -->
+            <div id="quiz-results-screen" class="hidden bg-white rounded-3xl p-8 shadow-sm border border-slate-200 text-center max-w-xl mx-auto space-y-6">
+                <div id="result-badge-icon" class="w-24 h-24 rounded-full flex items-center justify-center text-5xl mx-auto shadow-md">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+
+                <div class="space-y-2">
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800">¡Quiz Finalizado!</h2>
+                    <p id="result-message" class="text-sm text-slate-500">Excelente trabajo practicando tu vocabulario.</p>
+                </div>
+
+                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 grid grid-cols-2 gap-4">
+                    <div class="text-center border-r border-slate-200">
+                        <span class="text-xs text-slate-400 font-bold block uppercase">Puntaje Final</span>
+                        <span id="result-score-percent" class="text-3xl font-extrabold text-indigo-600">100%</span>
+                    </div>
+                    <div class="text-center">
+                        <span class="text-xs text-slate-400 font-bold block uppercase">Respuestas Correctas</span>
+                        <span id="result-score-count" class="text-3xl font-extrabold text-emerald-600">8 / 8</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                    <button onclick="startQuiz()" class="w-full sm:w-auto px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl shadow-md transition">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> Repetir Quiz
+                    </button>
+                    <button onclick="switchTab('flashcards')" class="w-full sm:w-auto px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-2xl transition">
+                        <i class="fa-solid fa-layer-group mr-2"></i> Repasar Flashcards
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 border-t border-slate-800 mt-12 py-6 px-4 text-center text-xs">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-graduation-cap text-indigo-400"></i>
+                <span class="font-semibold text-slate-300">Everyday Objects Learning Environment</span>
+            </div>
+            <p>Diseñado para la práctica interactiva de inglés cotidiano.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
