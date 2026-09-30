@@ -295,6 +295,7 @@ tailwind.config = {
         let currentQuizIndex = 0;
         let quizScore = 0;
         let activeQuizQuestions = [];
+        let currentSpeechText = '';
 
         function speakText(text) {
             if (!('speechSynthesis' in window)) {
@@ -305,6 +306,7 @@ tailwind.config = {
             // Stop any playing speech
             window.speechSynthesis.cancel();
 
+            currentSpeechText = text;
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'en-US';
             
@@ -329,6 +331,15 @@ tailwind.config = {
             window.speechSynthesis.onvoiceschanged = function() {
                 window.speechSynthesis.getVoices();
             };
+        }
+
+        const speedSelect = document.getElementById('speed-select');
+        if (speedSelect) {
+            speedSelect.addEventListener('change', function() {
+                if ('speechSynthesis' in window && window.speechSynthesis.speaking && currentSpeechText) {
+                    speakText(currentSpeechText);
+                }
+            });
         }
 
         function switchTab(tabName) {
