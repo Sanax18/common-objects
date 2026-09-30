@@ -296,6 +296,7 @@ tailwind.config = {
         let quizScore = 0;
         let activeQuizQuestions = [];
         let currentSpeechText = '';
+        let currentUtterance = null;
 
         function speakText(text) {
             if (!('speechSynthesis' in window)) {
@@ -303,11 +304,19 @@ tailwind.config = {
                 return;
             }
 
-            // Stop any playing speech
-            window.speechSynthesis.cancel();
+            // Cancel only when there is speech to interrupt; idle cancels can clip startup audio.
+            if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+                window.speechSynthesis.cancel();
+            }
 
             currentSpeechText = text;
             const utterance = new SpeechSynthesisUtterance(text);
+            currentUtterance = utterance;
+            utterance.onend = utterance.onerror = function() {
+                if (currentUtterance === utterance) {
+                    currentUtterance = null;
+                }
+            };
             utterance.lang = 'en-US';
             
             // Adjust speed rate from user selector
