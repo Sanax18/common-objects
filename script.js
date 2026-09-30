@@ -322,7 +322,10 @@ tailwind.config = {
             // Adjust speed rate from user selector
             const speedSelect = document.getElementById('speed-select');
             if (speedSelect) {
-                utterance.rate = parseFloat(speedSelect.value) || 1.0;
+                const selectedRate = Number(speedSelect.value);
+                if (Number.isFinite(selectedRate)) {
+                    utterance.rate = selectedRate;
+                }
             }
 
             // Try to find a high quality English voice if available
@@ -416,7 +419,7 @@ tailwind.config = {
                                         <i class="${item.icon}"></i>
                                     </div>
                                     <h3 class="text-2xl font-black text-slate-800 tracking-tight">${item.word}</h3>
-                                    <p class="text-xs font-mono text-slate-400">${item.ipa}</p>
+                                    <p class="text-m font-mono text-slate-400">${item.ipa}</p>
                                     <p class="text-xs font-semibold text-indigo-600 bg-indigo-50 inline-block px-3 py-1 rounded-lg">${item.translation}</p>
                                 </div>
 
